@@ -13,17 +13,62 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [view, setView] = useState<View>("list");
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const res = await fetch("/api/inventory");
-      const json = await res.json();
-      setItems(Array.isArray(json) ? json : []);
+      try {
+        const res = await fetch("/api/inventory");
+        const json = await res.json();
+        setItems(Array.isArray(json) ? json : []);
+        setOffline(!navigator.onLine);
+      } catch {
+        setOffline(true);
+      }
       setLoading(false);
     }
     load();
+
+    function handleOnline() {
+      setOffline(false);
+      load();
+    }
+    function handleOffline() {
+      setOffline(true);
+    }
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
+
+  function exportCsv() {
+    const headers = [
+      "car_name",
+      "collection_name",
+      "collection_number",
+      "series_number",
+      "color",
+      "is_gold",
+      "quantity",
+      "notes",
+    ];
+    const escape = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const rows = items.map((i) =>
+      headers.map((h) => escape(i[h as keyof HotwheelsRow])).join(",")
+    );
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `hotwheels-inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -50,7 +95,15 @@ export default function InventoryPage() {
               {carCount} cars · {seriesCount} series
             </div>
           </div>
-          <div className="flex rounded-[10px] bg-hw-surface p-[3px]">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={exportCsv}
+              disabled={items.length === 0}
+              className="flex h-9 items-center gap-1.5 rounded-[10px] bg-hw-surface px-3 text-xs font-bold text-[#52525B] disabled:opacity-40"
+            >
+              Export
+            </button>
+            <div className="flex rounded-[10px] bg-hw-surface p-[3px]">
             <button
               onClick={() => setView("list")}
               className={`flex h-[30px] w-8 items-center justify-center rounded-[8px] ${
@@ -80,8 +133,15 @@ export default function InventoryPage() {
                 ))}
               </div>
             </button>
+            </div>
           </div>
         </div>
+
+        {offline && (
+          <div className="mt-3 rounded-[10px] bg-hw-surface px-3.5 py-2 text-xs font-semibold text-hw-muted">
+            Offline — showing cached data
+          </div>
+        )}
 
         <div className="mt-3.5 flex h-11 items-center gap-[9px] rounded-[13px] bg-hw-surface px-3.5">
           <div className="relative h-3.5 w-3.5 flex-shrink-0 rounded-full border-2 border-[#A1A1AA]">

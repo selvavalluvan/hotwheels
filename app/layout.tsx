@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Saira, Saira_Condensed } from "next/font/google";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
 const saira = Saira({
@@ -49,6 +50,7 @@ export default function RootLayout({
       className={`${saira.variable} ${sairaCondensed.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white font-sans text-[#14110F]">
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>
