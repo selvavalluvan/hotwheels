@@ -51,7 +51,6 @@ export default function CameraCapture({
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture={multiple ? undefined : "environment"}
         multiple={multiple}
         className="hidden"
         onChange={handleChange}

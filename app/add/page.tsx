@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import CameraCapture from "@/components/CameraCapture";
 import { colorToHex } from "@/lib/colorSwatch";
+import { fileToBase64 } from "@/lib/image";
 import type { IdentifiedCar } from "@/lib/types";
 
 type Captured = { base64: string; mediaType: string; previewUrl: string };
@@ -16,10 +17,25 @@ interface BulkResult {
   error?: string;
 }
 
+const BLANK_FORM: IdentifiedCar = {
+  car_name: "",
+  collection_name: null,
+  collection_number: null,
+  collection_index: null,
+  collection_total: null,
+  series_number: null,
+  series_index: null,
+  series_total: null,
+  color: null,
+  is_gold: false,
+  confidence: "low",
+};
+
 export default function AddPage() {
   const [captured, setCaptured] = useState<Captured | null>(null);
   const [identifying, setIdentifying] = useState(false);
   const [form, setForm] = useState<IdentifiedCar | null>(null);
+  const [manual, setManual] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -50,7 +66,10 @@ export default function AddPage() {
   }
 
   async function handleSave() {
-    if (!form || !captured) return;
+    if (!form || !form.car_name.trim()) {
+      setError("Car name is required");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -59,8 +78,8 @@ export default function AddPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          image: captured.base64,
-          mediaType: captured.mediaType,
+          image: captured?.base64,
+          mediaType: captured?.mediaType,
         }),
       });
       const json = await res.json();
@@ -76,8 +95,17 @@ export default function AddPage() {
   function reset() {
     setCaptured(null);
     setForm(null);
+    setManual(false);
     setError(null);
     setSaved(false);
+  }
+
+  function startManual() {
+    setCaptured(null);
+    setManual(true);
+    setError(null);
+    setSaved(false);
+    setForm(BLANK_FORM);
   }
 
   async function handleBulkCapture(items: Captured[]) {
@@ -231,35 +259,59 @@ export default function AddPage() {
               </div>
             )}
 
-            {captured && !identifying && form && (
+            {!identifying && form && (
               <div className="flex-1 overflow-y-auto">
                 <div className="mb-3.5 flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={captured.previewUrl}
-                    alt="Captured car"
-                    className="h-[66px] w-[52px] flex-shrink-0 rounded-[9px] object-cover"
-                  />
+                  {captured ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={captured.previewUrl}
+                      alt="Captured car"
+                      className="h-[66px] w-[52px] flex-shrink-0 rounded-[9px] object-cover"
+                    />
+                  ) : (
+                    <AddPhotoThumb onCapture={(data) => setCaptured(data)} />
+                  )}
                   <div className="min-w-0 flex-1">
-                    <div className="inline-flex items-center gap-1.5 rounded-full bg-[#E7F6EC] px-2.5 py-1">
-                      <span className="text-[11px] font-extrabold text-hw-green">✓</span>
-                      <span className="text-[11px] font-bold tracking-wide text-hw-green">
-                        Identified
-                      </span>
-                    </div>
-                    <div className="mt-1 text-xs font-medium text-hw-muted">
-                      Check the details, then save.
-                    </div>
+                    {manual ? (
+                      <>
+                        <div className="inline-flex items-center gap-1.5 rounded-full bg-hw-surface px-2.5 py-1">
+                          <span className="text-[11px] font-bold tracking-wide text-[#52525B]">
+                            Manual Entry
+                          </span>
+                        </div>
+                        <div className="mt-1 text-xs font-medium text-hw-muted">
+                          {captured ? "Photo attached." : "Photo optional — add one or skip it."}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#E7F6EC] px-2.5 py-1">
+                          <span className="text-[11px] font-extrabold text-hw-green">✓</span>
+                          <span className="text-[11px] font-bold tracking-wide text-hw-green">
+                            Identified
+                          </span>
+                        </div>
+                        <div className="mt-1 text-xs font-medium text-hw-muted">
+                          Check the details, then save.
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <button
-                    onClick={reset}
-                    className="flex-shrink-0 text-xs font-bold text-hw-blue"
-                  >
-                    Retake
-                  </button>
+                  {!manual && (
+                    <button
+                      onClick={reset}
+                      className="flex-shrink-0 text-xs font-bold text-hw-blue"
+                    >
+                      Retake
+                    </button>
+                  )}
                 </div>
 
                 <Field label="Car name" value={form.car_name} onChange={(v) => setForm({ ...form, car_name: v })} highlight />
+                {!form.car_name.trim() && (
+                  <p className="-mt-2 mb-2.5 text-xs font-semibold text-hw-red">Car name is required</p>
+                )}
                 <Field
                   label="Collection"
                   value={form.collection_name ?? ""}
@@ -318,7 +370,7 @@ export default function AddPage() {
                 {!saved ? (
                   <button
                     onClick={handleSave}
-                    disabled={saving}
+                    disabled={saving || !form.car_name.trim()}
                     className="flex h-14 w-full items-center justify-center rounded-[16px] bg-hw-red text-base font-extrabold text-white shadow-[0_10px_24px_rgba(227,0,15,0.26)] disabled:opacity-50"
                   >
                     {saving ? "Saving…" : "Save to Inventory"}
@@ -339,13 +391,20 @@ export default function AddPage() {
 
             {!form && !identifying && (
               <div className="flex flex-col gap-2.5 pt-1">
-                <CameraCapture onCapture={handleCapture} label={captured ? "Retake Photo" : "Take Photo"} />
+                <CameraCapture onCapture={handleCapture} label="Take or Choose Photo" />
                 <CameraCapture
                   multiple
                   variant="secondary"
                   onCaptureMultiple={handleBulkCapture}
                   label="Bulk Add Photos"
                 />
+                <button
+                  type="button"
+                  onClick={startManual}
+                  className="mt-1 text-center text-sm font-bold text-hw-blue"
+                >
+                  Enter details manually
+                </button>
                 {error && <p className="mt-1 text-center text-sm text-hw-red">{error}</p>}
               </div>
             )}
@@ -362,6 +421,27 @@ function CameraIcon() {
       <div className="absolute -top-[9px] left-[13px] h-2 w-4 rounded-t-[5px] border-[2.5px] border-b-0 border-white/55" />
       <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white/55" />
     </div>
+  );
+}
+
+function AddPhotoThumb({ onCapture }: { onCapture: (data: Captured) => void }) {
+  return (
+    <label className="flex h-[66px] w-[52px] flex-shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-[9px] border-[1.5px] border-dashed border-hw-border text-hw-muted">
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const { base64, mediaType } = await fileToBase64(file);
+          onCapture({ base64, mediaType, previewUrl: URL.createObjectURL(file) });
+          e.target.value = "";
+        }}
+      />
+      <span className="text-lg leading-none">+</span>
+      <span className="text-[8px] font-bold uppercase leading-none">Photo</span>
+    </label>
   );
 }
 
