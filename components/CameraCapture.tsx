@@ -11,6 +11,7 @@ interface Props {
   multiple?: boolean;
   label?: string;
   variant?: "primary" | "secondary";
+  useCamera?: boolean;
 }
 
 export default function CameraCapture({
@@ -19,6 +20,7 @@ export default function CameraCapture({
   multiple,
   label,
   variant = "primary",
+  useCamera,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +53,7 @@ export default function CameraCapture({
         ref={inputRef}
         type="file"
         accept="image/*"
+        capture={useCamera ? "environment" : undefined}
         multiple={multiple}
         className="hidden"
         onChange={handleChange}

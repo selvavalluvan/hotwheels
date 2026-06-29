@@ -55,9 +55,10 @@ export default function CheckPage() {
 
       <div className="flex flex-1 flex-col p-[18px]">
         {!result && !checking && (
-          <div className="flex flex-1 flex-col justify-end">
-            <CameraCapture onCapture={handleCapture} label="Take Photo" />
-            {error && <p className="mt-3 text-center text-sm text-hw-red">{error}</p>}
+          <div className="flex flex-1 flex-col justify-end gap-2.5">
+            <CameraCapture useCamera onCapture={handleCapture} label="Take Photo" />
+            <CameraCapture onCapture={handleCapture} variant="secondary" label="Choose from Gallery" />
+            {error && <p className="mt-1 text-center text-sm text-hw-red">{error}</p>}
           </div>
         )}
 

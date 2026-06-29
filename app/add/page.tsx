@@ -225,7 +225,7 @@ export default function AddPage() {
           </div>
         ) : (
           <>
-            {!captured && (
+            {!captured && !form && (
               <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[24px] bg-[#16181D]">
                 <div className="px-[30px] text-center">
                   <CameraIcon />
@@ -391,7 +391,8 @@ export default function AddPage() {
 
             {!form && !identifying && (
               <div className="flex flex-col gap-2.5 pt-1">
-                <CameraCapture onCapture={handleCapture} label="Take or Choose Photo" />
+                <CameraCapture useCamera onCapture={handleCapture} label="Take Photo" />
+                <CameraCapture onCapture={handleCapture} variant="secondary" label="Choose from Gallery" />
                 <CameraCapture
                   multiple
                   variant="secondary"
