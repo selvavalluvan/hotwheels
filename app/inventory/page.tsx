@@ -46,7 +46,7 @@ export default function InventoryPage() {
       </div>
 
       <input
-        className="w-full max-w-md rounded border border-zinc-300 px-3 py-2"
+        className="w-full max-w-md rounded border border-zinc-300 bg-white px-3 py-2 text-zinc-900 placeholder-zinc-400"
         placeholder="Search by name or collection…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -78,7 +78,9 @@ export default function InventoryPage() {
                   {item.car_name} {item.is_gold ? "✨" : ""}
                 </p>
                 <p className="text-zinc-500">
-                  {item.collection_name ?? "—"} {item.collection_number ? `· ${item.collection_number}` : ""}
+                  {item.collection_name ?? "—"}
+                  {item.series_number ? ` ${item.series_number}` : ""}
+                  {item.collection_number ? ` · ${item.collection_number}` : ""}
                 </p>
                 <p className="text-zinc-400">{item.color ?? ""}</p>
               </div>

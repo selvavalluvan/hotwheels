@@ -7,8 +7,9 @@ already own it (and whether you have other cars from the same collection).
 ## How it works
 
 - **Add to Collection** (`/add`): photograph a car you own. Claude's vision model reads the
-  car name, collection name, collection number (e.g. `21/250`), color, and whether it's a
-  gold/Treasure Hunt variant. You can edit the result before saving it to Supabase.
+  car name, collection name, overall card number (e.g. `244/250`), the series sub-number badge
+  (e.g. `2/10` for "HW: THE '90S"), color, and whether it's a gold/Treasure Hunt variant. You
+  can edit the result before saving it to Supabase.
 - **Check at Store** (`/check`): photograph a car you're considering buying. The app identifies
   it and checks your inventory — telling you if you already own it, and listing any other cars
   you have from the same collection.
@@ -18,7 +19,8 @@ already own it (and whether you have other cars from the same collection).
 
 1. **Supabase**: create a project at [supabase.com](https://supabase.com), then run
    `supabase/schema.sql` in the SQL editor. This creates the `hotwheels` table and a public
-   `hotwheels-photos` storage bucket.
+   `hotwheels-photos` storage bucket. If you already ran an earlier version of `schema.sql`,
+   instead run `supabase/migrations/001_add_series_number.sql` to add the new series columns.
 2. **Anthropic API key**: get one at [console.anthropic.com](https://console.anthropic.com).
 3. Copy `.env.local.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL`

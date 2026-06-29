@@ -7,6 +7,9 @@ create table if not exists public.hotwheels (
   collection_number text,        -- e.g. "21/250" as printed on the card
   collection_index int,          -- 21 (parsed from collection_number)
   collection_total int,          -- 250 (parsed from collection_number)
+  series_number text,            -- e.g. "2/10" -- position within the named series badge
+  series_index int,              -- 2 (parsed from series_number)
+  series_total int,              -- 10 (parsed from series_number)
   color text,
   is_gold boolean default false, -- "Treasure Hunt" gold-spectraflame variant
   notes text,
