@@ -225,17 +225,6 @@ export default function AddPage() {
           </div>
         ) : (
           <>
-            {!captured && !form && (
-              <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[24px] bg-[#16181D]">
-                <div className="px-[30px] text-center">
-                  <CameraIcon />
-                  <div className="mt-3.5 text-[13px] font-semibold uppercase tracking-wider text-white/85">
-                    Take or upload a photo to get started
-                  </div>
-                </div>
-              </div>
-            )}
-
             {captured && identifying && (
               <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[24px] bg-[#0E1014]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -390,7 +379,15 @@ export default function AddPage() {
             )}
 
             {!form && !identifying && (
-              <div className="flex flex-col gap-2.5 pt-1">
+              <div className="flex flex-1 flex-col justify-center gap-2.5">
+                <div className="mb-2 text-center">
+                  <div className="font-condensed text-[22px] font-extrabold italic leading-[.95]">
+                    ADD A CAR
+                  </div>
+                  <p className="mt-1 text-xs font-medium text-hw-muted">
+                    Snap a photo of the card and we&apos;ll fill in the details.
+                  </p>
+                </div>
                 <CameraCapture useCamera onCapture={handleCapture} label="Take Photo" />
                 <CameraCapture onCapture={handleCapture} variant="secondary" label="Choose from Gallery" />
                 <CameraCapture
@@ -416,14 +413,6 @@ export default function AddPage() {
   );
 }
 
-function CameraIcon() {
-  return (
-    <div className="relative mx-auto mb-3.5 h-[46px] w-[46px] rounded-[11px] border-[2.5px] border-white/55">
-      <div className="absolute -top-[9px] left-[13px] h-2 w-4 rounded-t-[5px] border-[2.5px] border-b-0 border-white/55" />
-      <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white/55" />
-    </div>
-  );
-}
 
 function AddPhotoThumb({ onCapture }: { onCapture: (data: Captured) => void }) {
   return (

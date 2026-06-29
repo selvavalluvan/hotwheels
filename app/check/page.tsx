@@ -55,7 +55,15 @@ export default function CheckPage() {
 
       <div className="flex flex-1 flex-col p-[18px]">
         {!result && !checking && (
-          <div className="flex flex-1 flex-col justify-end gap-2.5">
+          <div className="flex flex-1 flex-col justify-center gap-2.5">
+            <div className="mb-2 text-center">
+              <div className="font-condensed text-[22px] font-extrabold italic leading-[.95]">
+                CHECK A CAR
+              </div>
+              <p className="mt-1 text-xs font-medium text-hw-muted">
+                Snap a photo at the store to see if you already own it.
+              </p>
+            </div>
             <CameraCapture useCamera onCapture={handleCapture} label="Take Photo" />
             <CameraCapture onCapture={handleCapture} variant="secondary" label="Choose from Gallery" />
             {error && <p className="mt-1 text-center text-sm text-hw-red">{error}</p>}
