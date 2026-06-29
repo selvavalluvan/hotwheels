@@ -24,6 +24,7 @@ export interface HotwheelsRow {
   series_total: number | null;
   color: string | null;
   is_gold: boolean;
+  quantity: number;
   notes: string | null;
   image_url: string | null;
   created_at: string;

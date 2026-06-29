@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { isSameCar } from "@/lib/match";
+import type { HotwheelsRow } from "@/lib/types";
 
 export async function GET() {
   const supabase = getSupabaseServerClient();
@@ -38,6 +40,33 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = getSupabaseServerClient();
+
+    const { data: existingRows, error: existingError } = await supabase
+      .from("hotwheels")
+      .select("*");
+
+    if (existingError) {
+      return NextResponse.json({ error: existingError.message }, { status: 500 });
+    }
+
+    const match = (existingRows as HotwheelsRow[] | null)?.find((r) =>
+      isSameCar(r, { car_name, collection_name, collection_number, series_number, color, is_gold: !!is_gold })
+    );
+
+    if (match) {
+      const { data: updated, error: updateError } = await supabase
+        .from("hotwheels")
+        .update({ quantity: (match.quantity ?? 1) + 1 })
+        .eq("id", match.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
+      }
+      return NextResponse.json({ ...updated, merged: true });
+    }
+
     let image_url: string | null = null;
 
     if (image && mediaType) {
@@ -69,6 +98,7 @@ export async function POST(req: NextRequest) {
         series_total,
         color,
         is_gold: !!is_gold,
+        quantity: 1,
         notes,
         image_url,
       })

@@ -12,6 +12,7 @@ create table if not exists public.hotwheels (
   series_total int,              -- 10 (parsed from series_number)
   color text,
   is_gold boolean default false, -- "Treasure Hunt" gold-spectraflame variant
+  quantity int not null default 1,
   notes text,
   image_url text,
   created_at timestamptz not null default now()
