@@ -198,15 +198,11 @@ export default function AddPage() {
         ) : (
           <>
             {!captured && (
-              <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[24px] bg-[#16181D]">
-                <Corner className="left-[18px] top-[18px] rounded-tl-[7px] border-b-0 border-r-0" />
-                <Corner className="right-[18px] top-[18px] rounded-tr-[7px] border-b-0 border-l-0" />
-                <Corner className="bottom-[18px] left-[18px] rounded-bl-[7px] border-r-0 border-t-0" />
-                <Corner className="bottom-[18px] right-[18px] rounded-br-[7px] border-l-0 border-t-0" />
+              <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[24px] bg-[#16181D]">
                 <div className="px-[30px] text-center">
                   <CameraIcon />
                   <div className="mt-3.5 text-[13px] font-semibold uppercase tracking-wider text-white/85">
-                    Center the card in frame
+                    Take or upload a photo to get started
                   </div>
                 </div>
               </div>
@@ -215,8 +211,10 @@ export default function AddPage() {
             {captured && identifying && (
               <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-[24px] bg-[#0E1014]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={captured.previewUrl} alt="Captured card" className="h-full w-full object-contain" />
-                <div className="absolute inset-x-0 top-0 h-[3px] animate-pulse bg-gradient-to-r from-transparent via-hw-red to-transparent" />
+                <img src={captured.previewUrl} alt="Captured card" className="h-full w-full object-cover" />
+                <div className="pointer-events-none absolute inset-0">
+                  <div className="absolute inset-x-0 top-0 h-[3px] animate-scan-line bg-gradient-to-r from-transparent via-hw-red to-transparent shadow-[0_0_16px_2px_rgba(227,0,15,0.7)]" />
+                </div>
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-[18px] pt-5">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[15px] font-bold text-white">Identifying card</span>
@@ -364,14 +362,6 @@ function CameraIcon() {
       <div className="absolute -top-[9px] left-[13px] h-2 w-4 rounded-t-[5px] border-[2.5px] border-b-0 border-white/55" />
       <div className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white/55" />
     </div>
-  );
-}
-
-function Corner({ className }: { className: string }) {
-  return (
-    <div
-      className={`absolute h-7 w-7 border-[2.5px] border-white/70 ${className}`}
-    />
   );
 }
 
