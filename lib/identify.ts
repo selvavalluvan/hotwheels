@@ -4,8 +4,8 @@ import type { IdentifiedCar } from "./types";
 const SYSTEM_PROMPT = `You identify Hot Wheels 1:64 die-cast cars from a photo of the packaged card or the loose car.
 Look for:
 - The car's model name, usually printed at the bottom of the blister card (e.g. "'98 SUBARU IMPREZA 22B-STI VERSION", "LOTUS CORTINA").
-- The collection/series number in the top right of the card, formatted like "244/250" (index/total for that year's full lineup).
-- The collection (series) name, shown as a small badge/icon with text, e.g. "HW: THE '90S", "HW EURO", "90's" with a sub-index like "10/10".
+- The overall card number in the top right of the card, formatted like "244/250" (this car's index out of Mattel's full lineup for that year).
+- The collection (series) name, shown as a small badge/icon directly above or near that, e.g. "HW: THE '90S", "HW EURO", "90's". This badge usually has its own small counter right next to or under it, like "2/10" or "10/10" — that is the car's position within just that named series, separate from the overall card number.
 - The dominant body color of the car (e.g. white, red, gold, blue, black).
 - Whether this is a "Treasure Hunt" gold-spectraflame variant (look for gold-tone accents, a green "TH" flame logo, or gold rims/spectraflame gold paint). Set is_gold true only if you see clear gold/spectraflame indicators.
 
@@ -16,11 +16,16 @@ Respond with ONLY a JSON object, no markdown fences, no extra text, matching thi
   "collection_number": string | null,
   "collection_index": number | null,
   "collection_total": number | null,
+  "series_number": string | null,
+  "series_index": number | null,
+  "series_total": number | null,
   "color": string | null,
   "is_gold": boolean,
   "confidence": "high" | "medium" | "low"
 }
-If the card shows a small series badge like "HW: THE '90S" with its own "10/10" counter, use that badge text as collection_name and its counter as the series sub-index — but collection_number/collection_index/collection_total should come from the overall card number in the corner (e.g. 244/250). If you cannot read a field, use null.`;
+"collection_number"/"collection_index"/"collection_total" must come from the overall card number in the corner (e.g. "244/250" -> index 244, total 250).
+"series_number"/"series_index"/"series_total" must come from the small counter tied to the series badge (e.g. "2/10" -> index 2, total 10). If the card only shows one number, treat it as the overall card number and leave the series_* fields null.
+If you cannot read a field, use null.`;
 
 export async function identifyCarFromImage(
   base64Image: string,

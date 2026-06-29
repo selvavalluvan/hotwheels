@@ -74,8 +74,12 @@ export default function CheckPage() {
               {result.identified.collection_name ?? "—"}
             </p>
             <p>
-              <span className="text-zinc-500">Number:</span>{" "}
+              <span className="text-zinc-500">Card number:</span>{" "}
               {result.identified.collection_number ?? "—"}
+            </p>
+            <p>
+              <span className="text-zinc-500">Series number:</span>{" "}
+              {result.identified.series_number ?? "—"}
             </p>
             <p>
               <span className="text-zinc-500">Color:</span> {result.identified.color ?? "—"}

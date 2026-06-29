@@ -92,9 +92,14 @@ export default function AddPage() {
             onChange={(v) => setForm({ ...form, collection_name: v })}
           />
           <Field
-            label="Collection number (e.g. 21/250)"
+            label="Card number (e.g. 244/250)"
             value={form.collection_number ?? ""}
             onChange={(v) => setForm({ ...form, collection_number: v })}
+          />
+          <Field
+            label="Series number (e.g. 2/10)"
+            value={form.series_number ?? ""}
+            onChange={(v) => setForm({ ...form, series_number: v })}
           />
           <Field label="Color" value={form.color ?? ""} onChange={(v) => setForm({ ...form, color: v })} />
           <label className="flex items-center gap-2 text-sm text-zinc-700">
@@ -144,7 +149,7 @@ function Field({
     <label className="block text-sm">
       <span className="text-zinc-500">{label}</span>
       <input
-        className="mt-1 w-full rounded border border-zinc-300 px-2 py-2"
+        className="mt-1 w-full rounded border border-zinc-300 bg-white px-2 py-2 text-zinc-900 placeholder-zinc-400"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
