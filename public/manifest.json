@@ -1,0 +1,10 @@
+{
+  "name": "Hot Wheels Inventory",
+  "short_name": "HW Inventory",
+  "description": "Scan and track your Hot Wheels die-cast collection",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#dc2626",
+  "icons": []
+}
