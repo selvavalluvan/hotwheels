@@ -36,6 +36,7 @@ export default function InventoryPage() {
   }, [items, query]);
 
   const seriesCount = new Set(items.map((i) => i.collection_name).filter(Boolean)).size;
+  const carCount = items.reduce((sum, i) => sum + (i.quantity ?? 1), 0);
 
   return (
     <main className="flex flex-1 flex-col">
@@ -46,7 +47,7 @@ export default function InventoryPage() {
               MY INVENTORY
             </div>
             <div className="mt-[3px] text-xs font-semibold text-hw-muted">
-              {items.length} cars · {seriesCount} series
+              {carCount} cars · {seriesCount} series
             </div>
           </div>
           <div className="flex rounded-[10px] bg-hw-surface p-[3px]">
@@ -116,6 +117,11 @@ export default function InventoryPage() {
                         TH
                       </span>
                     )}
+                    {item.quantity > 1 && (
+                      <span className="flex-shrink-0 rounded-[5px] bg-hw-surface px-1.5 py-0.5 text-[9px] font-extrabold text-[#52525B]">
+                        ×{item.quantity}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-0.5 truncate text-[11px] font-medium text-hw-muted">
                     {[item.collection_name, item.series_number, item.collection_number]
@@ -142,6 +148,11 @@ export default function InventoryPage() {
                   {item.is_gold && (
                     <span className="absolute right-2 top-2 rounded-[6px] bg-hw-gold px-[7px] py-0.5 text-[9px] font-extrabold text-[#5C4400]">
                       TH
+                    </span>
+                  )}
+                  {item.quantity > 1 && (
+                    <span className="absolute left-2 top-2 rounded-[6px] bg-black/55 px-[7px] py-0.5 text-[9px] font-extrabold text-white">
+                      ×{item.quantity}
                     </span>
                   )}
                 </div>
