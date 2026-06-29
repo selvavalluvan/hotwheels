@@ -104,8 +104,9 @@ export default function InventoryPage() {
         ) : view === "list" ? (
           <div className="flex flex-col gap-[11px]">
             {filtered.map((item) => (
-              <div
+              <Link
                 key={item.id}
+                href={`/inventory/${item.id}`}
                 className="flex items-center gap-3 rounded-[15px] border-[1.5px] border-hw-border-2 p-[11px]"
               >
                 <Thumb item={item} className="h-[58px] w-[46px]" />
@@ -136,13 +137,17 @@ export default function InventoryPage() {
                     <span className="text-[11px] font-semibold text-hw-muted-2">{item.color}</span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {filtered.map((item) => (
-              <div key={item.id} className="overflow-hidden rounded-[15px] border-[1.5px] border-hw-border-2">
+              <Link
+                key={item.id}
+                href={`/inventory/${item.id}`}
+                className="overflow-hidden rounded-[15px] border-[1.5px] border-hw-border-2"
+              >
                 <div className="relative">
                   <Thumb item={item} className="h-[104px] w-full" />
                   {item.is_gold && (
@@ -162,7 +167,7 @@ export default function InventoryPage() {
                     {[item.collection_name, item.series_number].filter(Boolean).join(" · ")}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
