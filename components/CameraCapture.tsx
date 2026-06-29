@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { fileToBase64 } from "@/lib/image";
 
 interface Props {
@@ -10,31 +10,18 @@ interface Props {
 
 export default function CameraCapture({ onCapture, label }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const { base64, mediaType } = await fileToBase64(file);
     const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
     onCapture({ base64, mediaType, previewUrl: url });
+    e.target.value = "";
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      {previewUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={previewUrl}
-          alt="Captured car"
-          className="w-full max-w-xs rounded-lg border border-gray-300 object-contain"
-        />
-      ) : (
-        <div className="flex h-48 w-full max-w-xs items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-400">
-          No photo yet
-        </div>
-      )}
+    <div>
       <input
         ref={inputRef}
         type="file"
@@ -46,8 +33,11 @@ export default function CameraCapture({ onCapture, label }: Props) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="w-full max-w-xs rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white active:bg-blue-700"
+        className="flex h-14 w-full items-center justify-center gap-2.5 rounded-[16px] bg-hw-red text-base font-extrabold text-white shadow-[0_10px_24px_rgba(227,0,15,0.26)]"
       >
+        <div className="relative h-[14px] w-[18px] rounded border-[2.5px] border-white">
+          <div className="absolute -top-[5px] left-[5px] h-1 w-2 rounded-t border-[2.5px] border-b-0 border-white" />
+        </div>
         {label ?? "Take Photo"}
       </button>
     </div>

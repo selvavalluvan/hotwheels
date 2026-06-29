@@ -1,15 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Saira, Saira_Condensed } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const saira = Saira({
+  variable: "--font-saira",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sairaCondensed = Saira_Condensed({
+  variable: "--font-saira-condensed",
   subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -19,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#dc2626",
+  themeColor: "#E3000F",
   width: "device-width",
   initialScale: 1,
 };
@@ -32,9 +34,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${saira.variable} ${sairaCondensed.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50">{children}</body>
+      <body className="min-h-full flex flex-col bg-white font-sans text-[#14110F]">
+        {children}
+      </body>
     </html>
   );
 }
